@@ -966,7 +966,8 @@ def sageattn_qk_int8_pv_fp8_cuda_sm90(
     if qk_quant_gran == "per_warp":
         q_int8, q_scale, k_int8, k_scale = per_warp_int8_cuda(q, k, km, tensor_layout=tensor_layout, BLKQ=64, WARPQ=16, BLKK=128)
     elif qk_quant_gran == "per_thread":
-        q_int8, q_scale, k_int8, k_scale = per_thread_int8_triton(q, k, km, tensor_layout=tensor_layout, BLKQ=64, WARPQ=16, BLKK=128, WARPK=128)
+        from .triton.quant_per_thread_v2 import per_thread_int8
+        q_int8, q_scale, k_int8, k_scale = per_thread_int8(q, k, km, tensor_layout=tensor_layout, BLKQ=64, WARPQ=16, BLKK=128, WARPK=128)
 
     o = torch.empty(q.size(), dtype=dtype, device=q.device)
 
