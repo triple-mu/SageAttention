@@ -24,7 +24,7 @@ from .triton.attn_qk_int8_per_block_causal import forward as attn_true
 from .triton.attn_qk_int8_block_varlen import forward as attn_false_varlen
 from .triton.attn_qk_int8_per_block_causal_varlen import forward as attn_true_varlen
 
-from .triton.quant_per_thread import per_thread_int8 as per_thread_int8_triton
+from .triton.quant_per_thread_v2 import per_thread_int8 as per_thread_int8_v2
 
 try:
     from . import sm80_compile
@@ -966,7 +966,6 @@ def sageattn_qk_int8_pv_fp8_cuda_sm90(
     if qk_quant_gran == "per_warp":
         q_int8, q_scale, k_int8, k_scale = per_warp_int8_cuda(q, k, km, tensor_layout=tensor_layout, BLKQ=64, WARPQ=16, BLKK=128)
     elif qk_quant_gran == "per_thread":
-        from .triton.quant_per_thread_v2 import per_thread_int8
         q_int8, q_scale, k_int8, k_scale = per_thread_int8(q, k, km, tensor_layout=tensor_layout, BLKQ=64, WARPQ=16, BLKK=128, WARPK=128)
 
     o = torch.empty(q.size(), dtype=dtype, device=q.device)
